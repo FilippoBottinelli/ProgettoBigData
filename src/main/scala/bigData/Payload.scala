@@ -6,7 +6,7 @@ case class Payload(
                     comment: String,
                     commits: Array[Commit],
                     description: String,
-                    distinct_size: Int,
+                    distinct_size: BigInt,
                     forkee: String,
                     head: String,
                     issue: String,
@@ -14,12 +14,12 @@ case class Payload(
                     member: String,
                     number: String,
                     pull_request: String,
-                    push_id: Int,
+                    push_id: BigInt,
                     pusher_type: String,
                     ref: String,
                     ref_type: String,
                     release: String,
-                    size: Int
+                    size: BigInt
                   ){
 
 }

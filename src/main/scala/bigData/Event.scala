@@ -3,11 +3,11 @@ package bigData
 case class Event(
                   actor: Actor,
                   created_at: String,
-                  id: Int,
+                  id: String,
                   org: String,
                   payload: Payload,
-                  public: Boolean,
+                  publicField: Boolean,
                   repo: String,
-                  type_event: String) {
+                  `type`: String) {
 
 }
