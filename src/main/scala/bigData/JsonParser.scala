@@ -6,7 +6,7 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.joda.time.DateTime
-import org.apache.spark.sql.functions.{col, count, explode}
+import org.apache.spark.sql.functions.{col, count, explode, hour}
 
 
 
@@ -108,7 +108,8 @@ object JsonParser {
     /////////////////////////// conto event divisi per type e actor ////////////////////////////////////////////////////
 
     //dataframe
-    myDataFrameEvent.select(col("type"), col("actor"), count($"").over(Window.partitionBy("type", "actor")) as "nEvent").show()
+    val dataFrameEvent = myDataFrameEvent.select(col("`type`"), col("actor"), count($"*").over(Window.partitionBy("`type`", "actor")))
+    dataFrameEvent.show()
 
     //rdd
     val rddEvent = myRddEvent.map(x => ((x.`type`, x.actor), 1L)).reduceByKey((e1,e2) => e1+e2)
@@ -118,10 +119,26 @@ object JsonParser {
     /////////////////////////// conto gli event divisi per type actor e repo ///////////////////////////////////////////
 
     //dataframe
-    myDataFrameEvent.select(col("type"), col("actor"), col("repo"), count($"").over(Window.partitionBy(col("type"), col("actor"), col("repo"))) as "nEvent").show()
+    val dataFrameEvent2 = myDataFrameEvent.select(col("`type`"), col("actor"), col("repo"), count($"*").over(Window.partitionBy(col("`type`"), col("actor"), col("repo"))))
+    dataFrameEvent2.show()
 
     //rdd
     myRddEvent.map(x => ((x.`type`, x.actor, x.repo), 1L)).reduceByKey((e1,e2) => e1+e2).take(10).foreach(println)
 
+    /*
+    //TODO: slide 2 ex 4
+    /////////////////////////// conto gli event divisi per type actor repo e ora ///////////////////////////////////////
+
+    //dataframe
+    val dataFrameEvent3 = myDataFrameEvent.select(col("`type`"), col("actor"), col("repo"), count($"*")
+      .over(Window.partitionBy(col("`type`"), col("actor"), col("repo"))))
+    dataFrameEvent3.groupBy(hour(col("`type`"), col("actor"), col("repo"))
+    dataFrameEvent3.show()
+
+    //rdd
+    */
+
+    /////////////////////////// chiusura sc ////////////////////////////////////////////////////////////////////////////
+    sc.stop()
   }
 }
